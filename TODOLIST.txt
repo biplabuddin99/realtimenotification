@@ -1,0 +1,50 @@
+1.  composer create-project laravel/laravel realtimenotification
+2.  php artisan migrate
+3.  composer require laravel/ui
+4.  php artisan ui bootstrap --auth
+5.  npm install
+6.  npm run build
+7.  php artisan serve
+8.  make controller/model/migration/create screen
+9.  php artisan make:migration add_is_admin_column_in_users_table      //when add new column
+10. php artisan make:seeder AdminUser
+11. php artisan db:seed --class:AdminUser
+12. php artisan install:broadcasting
+13. php artisan make:event PostCreate
+    1. use Illuminate\Contracts\Broadcasting\ShouldBroadcast;  this path implement use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+    2.class PostCreate  //this path implement// class PostCreate implements ShouldBroadcastNow
+    3.previous Contracts; public $post;
+    4.adding
+    public function __construct($post)
+    {
+        $this->post = $post;
+    }
+    5. changing this function,
+        public function broadcastOn(): array
+    {
+        return [
+            new PrivateChannel('channel-name'),
+        ];
+    }
+    6.adding anather function
+
+    public function broadcastAs()
+    {
+        return "create";
+    }
+    public function BroadcastWith()
+    {
+        return [
+            "message" => "[{$this->post->created_at}] New Post received whit title '{$this->post->title}'"
+        ];
+    }
+    7.addning this script blade
+    <script type="module">
+        //    Echo.channel("posts").
+        window.Echo.channel("posts").
+        listen('.create', (e) => {
+                console.log(e);
+                var sh = document.getElementById('notification');
+                sh.insertAdjacentHTML('beforeend','<div class="alert alert-success">'+e.message+'</div>');
+            });
+    </script>
