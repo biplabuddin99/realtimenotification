@@ -58,6 +58,7 @@
             console.log(e);
             var sh = document.getElementById('notification');
             sh.insertAdjacentHTML('beforeend','<div class="alert alert-success">'+e.message+'</div>');
+            //forceTLS: true
         });
 </script>
 @endif
