@@ -5,13 +5,13 @@
 5.  npm install
 6.  npm run build
 7.  php artisan serve
-8.  make controller/model/migration/create screen
+8.  make controller/model/migration/create screen    //posts
 9.  php artisan make:migration add_is_admin_column_in_users_table      //when add new column
 10. php artisan make:seeder AdminUser
 11. php artisan db:seed --class:AdminUser
 12. php artisan install:broadcasting
 13. php artisan make:event PostCreate
-    1. use Illuminate\Contracts\Broadcasting\ShouldBroadcast;  this path implement use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+    1. use Illuminate\Contracts\Broadcasting\ShouldBroadcast;  this path replace use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
     2.class PostCreate  //this path implement// class PostCreate implements ShouldBroadcastNow
     3.previous Contracts; public $post;
     4.adding
@@ -48,3 +48,33 @@
                 sh.insertAdjacentHTML('beforeend','<div class="alert alert-success">'+e.message+'</div>');
             });
     </script>
+
+
+*** https://mupati.medium.com/live-stream-with-webrtc-in-your-laravel-application-b6ecc13d8509  implement step by step
+14. Add routes  routes/web.php file
+
+    Route::get('/streaming', 'App\Http\Controllers\WebrtcStreamingController@index');
+    Route::get('/streaming/{streamId}', 'App\Http\Controllers\WebrtcStreamingController@consumer');
+    Route::post('/stream-offer', 'App\Http\Controllers\WebrtcStreamingController@makeStreamOffer');
+    Route::post('/stream-answer', 'App\Http\Controllers\WebrtcStreamingController@makeStreamAnswer');
+15. Create Dynamic Presence and Private Channel in routes/channels.php
+
+    // Dynamic Presence Channel for Streaming
+    Broadcast::channel('streaming-channel.{streamId}', function ($user) {
+        return ['id' => $user->id, 'name' => $user->name];
+    });
+
+    // Signaling Offer and Answer Channels
+    Broadcast::channel('stream-signal-channel.{userId}', function ($user, $userId) {
+        return (int) $user->id === (int) $userId;
+    });
+
+16.  php artisan make:event StreamOffer
+     php artisan make:event StreamAnswer
+17.  Add the code to app/Events/StreamOffer.php
+18.  Add the code to app/Events/StreamAnswer.php
+19.  php artisan make:controller WebrtcStreamingController
+20.  Create resources/js/helpers.js
+21.  resources/js/components/Broadcaster.vue
+22.  resources/js/components/Viewer.vue
+23.  resources/views/video-broadcast.blade.php
